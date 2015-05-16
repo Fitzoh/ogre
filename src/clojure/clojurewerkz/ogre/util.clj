@@ -1,22 +1,18 @@
 (ns clojurewerkz.ogre.util
-  (:import (com.tinkerpop.gremlin.process Traversal)
-           (com.tinkerpop.gremlin.process.graph GraphTraversal VertexTraversal EdgeTraversal AnonymousGraphTraversal$Tokens AnonymousGraphTraversal)
-           (com.tinkerpop.gremlin.structure Compare Direction Contains Graph)
-           (com.tinkerpop.gremlin.process.graph.util DefaultGraphTraversal)
-           (java.util.function Function Consumer Predicate BiPredicate BiFunction)))
+  (:import (org.apache.tinkerpop.gremlin.process.traversal.dsl.graph GraphTraversal)
+           (org.apache.tinkerpop.gremlin.structure Compare Direction Contains)
+           (java.util.function Function Consumer Predicate BiPredicate BiFunction)
+           (org.apache.tinkerpop.gremlin.process.traversal Traversal)
+           (org.apache.tinkerpop.gremlin.process.traversal.dsl.graph GraphTraversal )))
 
 (defmacro typed-traversal
   [method ^Traversal t & args]
-    `(cond
-       (instance? GraphTraversal ~t) (~method ~(vary-meta t assoc :tag `GraphTraversal) ~@args)
-       (instance? VertexTraversal ~t) (~method ~(vary-meta t assoc :tag `VertexTraversal) ~@args)
-       (instance? EdgeTraversal ~t) (~method ~(vary-meta t assoc :tag `EdgeTraversal) ~@args)
-       (instance? AnonymousGraphTraversal ~t) (~method ~(vary-meta t assoc :tag `AnonymousGraphTraversal) ~@args)))
+    `((~method ~(vary-meta t assoc :tag `GraphTraversal) ~@args)))
 
 (defn as
   "Assigns a name to the previous step in a traversal."
-  [^Traversal t label]
-  (typed-traversal .as t ^String (name label)))
+  [^GraphTraversal t label]
+  (.as t (name label) (to-array [])))
 
 (defmacro query
   "Starts a query."
@@ -36,10 +32,6 @@
                    <         Compare/lt
                    contains? Contains/within})
 
-;; todo: this should be temporary - anon-traversal is kinda ugly
-(defn anon-traversal
-  []
-  (AnonymousGraphTraversal$Tokens/__))
 
 (defn ^"[Ljava.lang.String;" str-array [strs]
   "Converts a collection of strings to a java String array."

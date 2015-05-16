@@ -9,7 +9,7 @@
   (testing "g.V().local(__.outE().count())"
     (let [g (u/modern-tinkergraph)
           vs (q/query (v/get-all-vertices g)
-                      (q/local (-> (util/anon-traversal)
+                      (q/local (->
                                    q/-E>
                                    q/count))
                       q/into-vec!)]

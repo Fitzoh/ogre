@@ -1,9 +1,8 @@
 (ns clojurewerkz.ogre.io
   (:require [clojure.java.io :as io]
             [clojurewerkz.ogre.graph :as g])
-  (:import [com.tinkerpop.gremlin.structure.io.graphml GraphMLWriter GraphMLReader]
-           [com.tinkerpop.gremlin.structure.io.graphson GraphSONWriter GraphSONReader]
-           [com.tinkerpop.gremlin.structure.io.kryo KryoWriter KryoReader]))
+  (:import [org.apache.tinkerpop.gremlin.structure.io.graphml GraphMLWriter GraphMLReader]
+           [org.apache.tinkerpop.gremlin.structure.io.graphson GraphSONWriter GraphSONReader]))
 
 (defn- read-graph-with-reader
   [reader g string-or-file]
@@ -72,8 +71,8 @@
 (def write-graph-graphson (partial write-graph-with-writer #(.writeGraph (make-graphson-writer) %1 %2)))
 
 ;; Kryo Reader
-(defn ^KryoReader make-kryo-reader [& {:keys [vertex-id-key edge-id-key working-directory custom batch-size]}]
-  (let [builder (KryoReader/build)]
+(defn  make-kryo-reader [& {:keys [vertex-id-key edge-id-key working-directory custom batch-size]}]
+  (let [builder ()]
     (-> builder
       (set-if-present vertex-id-key (memfn vertexIdKey))
       (set-if-present edge-id-key (memfn edgeIdKey))
@@ -84,8 +83,8 @@
 (def read-graph-kryo (partial read-graph-with-reader #(.readGraph (make-kryo-reader) %1 %2)))
 
 ;; Kryo Writer
-(defn ^KryoWriter make-kryo-writer [& {:keys [custom]}]
-  (let [builder (KryoWriter/build)]
+(defn  make-kryo-writer [& {:keys [custom]}]
+  (let [builder ()]
     (-> builder
       (set-if-present custom (memfn custom))
       (.create))))
